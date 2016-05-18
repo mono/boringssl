@@ -178,6 +178,15 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS "3.2")
   set(MAYBE_USES_TERMINAL USES_TERMINAL)
 endif()
 
+set (
+	BORINGSSL_OBJECTS
+	$<TARGET_OBJECTS:crypto-objects>
+	${crypto_objects_dependencies}
+	$<TARGET_OBJECTS:ssl-objects>
+	${ssl_objects_dependencies}
+	PARENT_SCOPE
+)
+
 add_custom_target(
     run_tests
     COMMAND ${GO_EXECUTABLE} run util/all_tests.go -build-dir

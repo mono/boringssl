@@ -140,6 +140,71 @@ add_subdirectory(pkcs8)
 # Test support code
 add_subdirectory(test)
 
+set(
+  crypto_objects_dependencies
+  $<TARGET_OBJECTS:stack>
+  $<TARGET_OBJECTS:lhash>
+  $<TARGET_OBJECTS:err>
+  $<TARGET_OBJECTS:base64>
+  $<TARGET_OBJECTS:bytestring>
+  $<TARGET_OBJECTS:sha>
+  $<TARGET_OBJECTS:md4>
+  $<TARGET_OBJECTS:md5>
+  $<TARGET_OBJECTS:digest>
+  $<TARGET_OBJECTS:cipher>
+  $<TARGET_OBJECTS:modes>
+  $<TARGET_OBJECTS:aes>
+  $<TARGET_OBJECTS:des>
+  $<TARGET_OBJECTS:rc4>
+  $<TARGET_OBJECTS:conf>
+  $<TARGET_OBJECTS:chacha>
+  $<TARGET_OBJECTS:poly1305>
+  $<TARGET_OBJECTS:curve25519>
+  $<TARGET_OBJECTS:buf>
+  $<TARGET_OBJECTS:bn>
+  $<TARGET_OBJECTS:bio>
+  $<TARGET_OBJECTS:rand>
+  $<TARGET_OBJECTS:obj>
+  $<TARGET_OBJECTS:asn1>
+  $<TARGET_OBJECTS:engine>
+  $<TARGET_OBJECTS:dh>
+  $<TARGET_OBJECTS:dsa>
+  $<TARGET_OBJECTS:rsa>
+  $<TARGET_OBJECTS:ec>
+  $<TARGET_OBJECTS:ecdh>
+  $<TARGET_OBJECTS:ecdsa>
+  $<TARGET_OBJECTS:hmac>
+  $<TARGET_OBJECTS:cmac>
+  $<TARGET_OBJECTS:evp>
+  $<TARGET_OBJECTS:hkdf>
+  $<TARGET_OBJECTS:pem>
+  $<TARGET_OBJECTS:x509>
+  $<TARGET_OBJECTS:x509v3>
+  $<TARGET_OBJECTS:pkcs8>
+  PARENT_SCOPE
+)
+
+add_library(
+  crypto-objects OBJECT
+
+  crypto.c
+  directory_posix.c
+  directory_win.c
+  ex_data.c
+  mem.c
+  refcount_c11.c
+  refcount_lock.c
+  thread.c
+  thread_none.c
+  thread_pthread.c
+  thread_win.c
+  time_support.c
+
+  ${CRYPTO_ARCH_SOURCES}
+)
+
+
+
 add_library(
   crypto
 
