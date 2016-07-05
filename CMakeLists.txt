@@ -29,7 +29,7 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(C_CXX_FLAGS "-Wall -Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -ggdb -fvisibility=hidden")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_CXX_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x ${C_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ ${C_CXX_FLAGS}")
 elseif(MSVC)
   set(MSVC_DISABLED_WARNINGS_LIST
       "C4100" # 'exarg' : unreferenced formal parameter
@@ -149,12 +149,12 @@ if (ANDROID AND ${ARCH} STREQUAL "arm")
   set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
-if (${ARCH} STREQUAL "x86" AND APPLE)
+# if (${ARCH} STREQUAL "x86" AND APPLE)
   # With CMake 2.8.x, ${CMAKE_SYSTEM_PROCESSOR} evalutes to i386 on OS X,
   # but clang defaults to 64-bit builds on OS X unless otherwise told.
   # Set ARCH to x86_64 so clang and CMake agree. This is fixed in CMake 3.
-  set(ARCH "x86_64")
-endif()
+#  set(ARCH "x86_64")
+#endif()
 
 if (OPENSSL_NO_ASM)
   add_definitions(-DOPENSSL_NO_ASM)
