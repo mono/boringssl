@@ -16,15 +16,15 @@ if(ANDROID)
   # Android-NDK CMake files reconfigure the path and so Go and Perl won't be
   # found. However, ninja will still find them in $PATH if we just name them.
   set(PERL_EXECUTABLE "perl")
-  set(GO_EXECUTABLE "go")
+  # set(GO_EXECUTABLE "go")
 else()
   find_package(Perl REQUIRED)
-  find_program(GO_EXECUTABLE go)
+  # find_program(GO_EXECUTABLE go)
 endif()
 
-if (NOT GO_EXECUTABLE)
-  message(FATAL_ERROR "Could not find Go")
-endif()
+#if (NOT GO_EXECUTABLE)
+#  message(FATAL_ERROR "Could not find Go")
+#endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(C_CXX_FLAGS "-Wall -Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -ggdb -fvisibility=hidden")
@@ -193,12 +193,12 @@ set (
 	PARENT_SCOPE
 )
 
-add_custom_target(
-    run_tests
-    COMMAND ${GO_EXECUTABLE} run util/all_tests.go -build-dir
-            ${CMAKE_BINARY_DIR}
-    COMMAND cd ssl/test/runner
-    COMMAND ${GO_EXECUTABLE} test -shim-path $<TARGET_FILE:bssl_shim>
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    DEPENDS all_tests bssl_shim
-    ${MAYBE_USES_TERMINAL})
+# add_custom_target(
+#     run_tests
+#     COMMAND ${GO_EXECUTABLE} run util/all_tests.go -build-dir
+#             ${CMAKE_BINARY_DIR}
+#     COMMAND cd ssl/test/runner
+#     COMMAND ${GO_EXECUTABLE} test -shim-path $<TARGET_FILE:bssl_shim>
+#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#     DEPENDS all_tests bssl_shim
+#     ${MAYBE_USES_TERMINAL})
