@@ -89,7 +89,7 @@ static bool TestPoly1305(FileTest *t, void *arg) {
   CRYPTO_poly1305_init(&state, key.data());
   CRYPTO_poly1305_update(&state, in.data(), in.size());
   // |CRYPTO_poly1305_finish| requires a 16-byte-aligned output.
-  alignas(16) uint8_t out[16];
+  uint8_t out[16] __attribute__ ((aligned(0x10)));
   CRYPTO_poly1305_finish(&state, out);
   if (!t->ExpectBytesEqual(out, 16, mac.data(), mac.size())) {
     t->PrintLine("Single-shot Poly1305 failed.");
