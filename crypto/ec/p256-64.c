@@ -19,7 +19,6 @@
  * Otherwise based on Emilia's P224 work, which was inspired by my curve25519
  * work which got its smarts from Daniel J. Bernstein's work on the same. */
 
-#include <endian.h>
 #include <openssl/base.h>
 
 #if defined(OPENSSL_64_BIT) && !defined(OPENSSL_WINDOWS)
@@ -78,32 +77,32 @@ static const u64 bottom63bits = 0x7ffffffffffffffful;
 /* bin32_to_felem takes a little-endian byte array and converts it into felem
  * form. This assumes no particular CPU endianess. */
 static void bin32_to_felem(felem out, const u8 in[32]) {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-  out[0] = *((const u64 *)&in[0]);
-  out[1] = *((const u64 *)&in[8]);
-  out[2] = *((const u64 *)&in[16]);
-  out[3] = *((const u64 *)&in[24]);
-#else
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
   out[0] = *((const u64 *)&in[24]);
   out[1] = *((const u64 *)&in[16]);
   out[2] = *((const u64 *)&in[8]);
   out[3] = *((const u64 *)&in[0]);
+#else
+  out[0] = *((const u64 *)&in[0]);
+  out[1] = *((const u64 *)&in[8]);
+  out[2] = *((const u64 *)&in[16]);
+  out[3] = *((const u64 *)&in[24]);
 #endif
 }
 
 /* smallfelem_to_bin32 takes a smallfelem and serialises into a little endian,
  * 32 byte array. This assumes no particular CPU endianess. */
 static void smallfelem_to_bin32(u8 out[32], const smallfelem in) {
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-  *((u64 *)&out[0]) = in[0];
-  *((u64 *)&out[8]) = in[1];
-  *((u64 *)&out[16]) = in[2];
-  *((u64 *)&out[24]) = in[3];
-#else
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
   *((u64 *)&out[0]) = in[3];
   *((u64 *)&out[8]) = in[2];
   *((u64 *)&out[16]) = in[1];
   *((u64 *)&out[24]) = in[0];
+#else
+  *((u64 *)&out[0]) = in[0];
+  *((u64 *)&out[8]) = in[1];
+  *((u64 *)&out[16]) = in[2];
+  *((u64 *)&out[24]) = in[3];
 #endif
 }
 
@@ -133,12 +132,12 @@ static int BN_to_felem(felem out, const BIGNUM *bn) {
 
   felem_bytearray b_in;
   num_bytes = BN_bn2bin(bn, b_in);
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-  flip_endian(b_out, b_in, num_bytes);
-  bin32_to_felem(out, b_out);
-#else
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
   memcpy(b_out+sizeof(b_out)-num_bytes, b_in, num_bytes);
   memset(b_out, 0, sizeof(b_out)-num_bytes);
+#else
+  flip_endian(b_out, b_in, num_bytes);
+  bin32_to_felem(out, b_out);
 #endif
   return 1;
 }
@@ -146,12 +145,12 @@ static int BN_to_felem(felem out, const BIGNUM *bn) {
 /* felem_to_BN converts an felem into an OpenSSL BIGNUM. */
 static BIGNUM *smallfelem_to_BN(BIGNUM *out, const smallfelem in) {
   felem_bytearray b_out;
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  smallfelem_to_bin32(b_out, in);
+#else
   felem_bytearray b_in;
   smallfelem_to_bin32(b_in, in);
   flip_endian(b_out, b_in, sizeof(b_out));
-#else
-  smallfelem_to_bin32(b_out, in);
 #endif
   return BN_bin2bn(b_out, sizeof(b_out), out);
 }
