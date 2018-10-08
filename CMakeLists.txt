@@ -15,10 +15,14 @@ enable_language(CXX)
 if(ANDROID)
   # Android-NDK CMake files reconfigure the path and so Go and Perl won't be
   # found. However, ninja will still find them in $PATH if we just name them.
-  set(PERL_EXECUTABLE "perl")
+  if(NOT OPENSSL_NO_ASM)
+    set(PERL_EXECUTABLE "perl")
+  endif()
   # set(GO_EXECUTABLE "go")
 else()
-  find_package(Perl REQUIRED)
+  if(NOT OPENSSL_NO_ASM)
+    find_package(Perl REQUIRED)
+  endif()
   # find_program(GO_EXECUTABLE go)
 endif()
 
@@ -185,7 +189,9 @@ if (ANDROID AND ${ARCH} STREQUAL "arm")
   # The Android-NDK CMake files somehow fail to set the -march flag for
   # assembly files. Without this flag, the compiler believes that it's
   # building for ARMv5.
-  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}")
+  if (NOT OPENSSL_NO_ASM)
+    set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}")
+  endif()
 endif()
 
 # if (${ARCH} STREQUAL "x86" AND APPLE)
