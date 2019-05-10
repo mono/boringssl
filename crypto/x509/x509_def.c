@@ -61,7 +61,7 @@
 
 #ifdef OPENSSL_WINDOWS
 /* OpenSSL defaults on Windows. */
-#if _WIN64
+#ifdef _WIN64
 #define OPENSSLDIR "C:\\Program Files\\Common Files\\SSL"
 #else
 #define OPENSSLDIR "C:\\Program Files (x86)\\Common Files\\SSL"
